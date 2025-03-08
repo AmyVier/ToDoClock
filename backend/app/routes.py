@@ -17,6 +17,8 @@ from .dynamodb import get_all_tasks, add_task
 routes = Blueprint('routes', __name__)
 
 # Route to get all tasks from DynamoDB
+# Response Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
+# Task_end_date, Task_completion
 @routes.route('/tasks', methods=['GET'])
 def tasks():
     tasks = get_all_tasks()
@@ -26,17 +28,23 @@ def tasks():
         return jsonify({"message": "Error fetching tasks"}), 500
 
 # Route to add a new task to DynamoDB
-# To edit later: add more attributes to task, i.e dates, etc.
+# Request Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
+# Task_end_date, Task_completion
 @routes.route('/tasks', methods=['POST'])
 def add_new_task():
     data = request.get_json()
 
     # to change later: attributes may be changed/deleted/added
-    task_id = data.get('task_id')
-    task_name = data.get('task_name')
+    task_username = data.get('Username')
+    task_name = data.get('Task_name')
+    task_description = data.get('Task_description')
+    task_start_date = data.get('Task_start_date')
+    task_end_date = data.get('Task_end_date')
+    task_completion = data.get('Task_completion')
 
-    if task_id and task_name:
-        result = add_task(task_id, task_name)
+    if task_name:
+        result = add_task(task_username, task_name, task_description, 
+                          task_start_date, task_end_date, task_completion)
         if result['status'] == 'success':
             return jsonify(result), 200
         else:

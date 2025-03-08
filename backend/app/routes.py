@@ -29,7 +29,7 @@ def tasks():
         return jsonify({"message": "Error fetching tasks"}), 500
 
 # Route to add a new task to DynamoDB
-# Request Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
+# Request Body: Username, Task_name, Task_description, Task_start_date, 
 # Task_end_date, Task_completion
 @routes.route('/tasks', methods=['POST'])
 def add_new_task():

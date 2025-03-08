@@ -18,6 +18,7 @@ accountTable = dynamodb.Table('Account')
 # sort key: TaskID
 # attributes: Task_name, Task_description, Task_start_date, 
 # Task_end_date, Task_completion
+# (task dates are in the format: "yyyy-mm-dd hh:mm" and Task_completion is False/True)
 taskTable = dynamodb.Table('Task') 
 
 # Function to get all tasks from DynamoDB

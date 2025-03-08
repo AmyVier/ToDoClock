@@ -19,6 +19,7 @@ routes = Blueprint('routes', __name__)
 # Route to get all tasks from DynamoDB
 # Response Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
 # Task_end_date, Task_completion
+# (task dates are in the format: "yyyy-mm-dd hh:mm" and Task_completion is False/True)
 @routes.route('/tasks', methods=['GET'])
 def tasks():
     tasks = get_all_tasks()

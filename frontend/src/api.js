@@ -9,7 +9,7 @@ import axios from 'axios';
 
 // edit later: we will be hosting the backend on EC2.
 // replace local host with EC2 public IPv4 address
-const API_URL = 'http://localhost:8000';
+const API_URL = 'http://18.220.226.207:8000';
 
 // Check if account exists
 export const checkAccount = async (username, password) => {

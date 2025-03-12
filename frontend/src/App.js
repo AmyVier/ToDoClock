@@ -1,20 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { getTasks, addTask } from './api';  
-import Clock from './Clock'; 
-
+import { UserProvider } from './context/UserContext';
+import SignIn from './pages/signIn';
+import SignUp from './pages/signup';
+import Edit from './pages/edit';
+import Features from './pages/features';
+import Home from './pages/home';
+import DayClock from './pages/24hrClock';
 
 function App() {
   return (
-    <Router>
-      <div>
-        {/* Define your routes here */}
-        <Routes>
-          {/* to test out clock UI */}
-          <Route path="/testClock" element={<Clock />} /> 
-        </Routes>
-      </div>
-    </Router>
+    <UserProvider>
+      <Router>
+        <div>
+          <Routes>
+            <Route path="/login" element={<SignIn />} /> 
+            <Route path="/signUp" element={<SignUp />} /> 
+            <Route path="/edit" element={<Edit />} /> 
+            <Route path="/features" element={<Features />} /> 
+            <Route path="/" element={<Home />} /> 
+            <Route path="/clock" element={<DayClock />} /> 
+          </Routes>
+        </div>
+      </Router>
+    </UserProvider>
   );
 }
 

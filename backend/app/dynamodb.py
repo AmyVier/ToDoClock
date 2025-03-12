@@ -3,6 +3,7 @@ This file  connects with a
 DynamoDB database to store and retrieve task data.
 """
 import time
+from datetime import datetime
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
@@ -68,7 +69,12 @@ def get_all_tasks(username):
             FilterExpression='Username = :username',
             ExpressionAttributeValues={':username': username}
         )
-        return response['Items']  
+
+        tasks = response['Items']
+
+        tasks.sort(key=lambda x: datetime.strptime(x['Task_start_date'], '%H:%M'))
+
+        return tasks  
     except (NoCredentialsError, PartialCredentialsError) as e:
         print(f"AWS Credentials issue: {e}")
         return None
@@ -76,12 +82,39 @@ def get_all_tasks(username):
         print(f"Error retrieving tasks: {e}")
         return None
 
+def check_time_overlap(start1, end1, start2, end2):
+    """
+    Helper function to check if two time periods overlap.
+    Returns True if there is an overlap, otherwise False.
+    """
+    return not (end1 <= start2 or end2 <= start1)
+
+
 # Function to add a new task
 def add_task(username, task_name, task_description, 
              task_start_date, task_end_date, task_completion):
     task_id = f"task_{int(time.time())}"
 
     try:
+        start_time = datetime.strptime(task_start_date, '%H:%M')
+        end_time = datetime.strptime(task_end_date, '%H:%M')
+    except ValueError as e:
+        return {'status': 'failure', 'message': f"Error parsing time: {e}"}
+    
+    try: 
+        response = taskTable.scan(
+            FilterExpression='Username = :username',
+            ExpressionAttributeValues={':username': username}
+        )
+        existing_tasks = response['Items']
+        for existing_task in existing_tasks:
+            existing_start_time = datetime.strptime(existing_task['Task_start_date'], '%H:%M')
+            existing_end_time = datetime.strptime(existing_task['Task_end_date'], '%H:%M')
+
+            # If there's an overlap, return failure
+            if check_time_overlap(start_time, end_time, existing_start_time, existing_end_time):
+                return {'status': 'failure', 'message': 'Task time overlaps with an existing task'}
+            
         taskTable.put_item(Item={'Username': username, 'TaskID': task_id, 
                                  'Task_name': task_name, 'Task_description': task_description,
                                  'Task_start_date': task_start_date, 'Task_end_date': task_end_date, 

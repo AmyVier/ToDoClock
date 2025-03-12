@@ -28,8 +28,8 @@ function Clock({ taskList }) {
 const styles = {
   circle: {
     position: 'relative', // Make the circle position relative so that child elements can be absolutely positioned inside it
-    width: '300px',
-    height: '300px',
+    width: '400px',
+    height: '400px',
     borderRadius: '50%',  // Make it a circle
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', // Optional, adds a shadow
     overflow: 'hidden', // Ensure child elements don't overflow the circle
@@ -40,8 +40,8 @@ const styles = {
     top: '50%', // Center vertically
     left: '50%', // Center horizontally
     transform: 'translate(-50%, -50%)', // Adjust for exact centering
-    width: '250px', // Adjust size of image
-    height: '250px', // Adjust size of image
+    width: '350px', // Adjust size of image
+    height: '350px', // Adjust size of image
   },
 
   gradientSegment: {

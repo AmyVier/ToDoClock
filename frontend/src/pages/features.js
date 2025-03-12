@@ -2,7 +2,11 @@ import React from 'react';
 import { useUser } from '../context/UserContext';
 
 const Features = () => {
-  const { username } = useUser();
+  const { username, signOut } = useUser();
+
+  const handleLogout = () => {
+    signOut(); // Call the signOut function from context
+  };
 
   return (
     <div>
@@ -24,6 +28,7 @@ const Features = () => {
                   {/* Buttons visible when the user is logged in */}
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-do Clock</button></a>
                   <a href="/edit"><button type="button" className="btn btn-info">Edit Tasks</button></a>
+                  <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               ) : (
                 <>
@@ -77,7 +82,7 @@ const Features = () => {
       <div className="container col-xxl-8 px-4">
         <div className="row flex-lg-row-reverse align-items-center g-5 py-5">
           <div className="col-10 col-sm-8 col-lg-6">
-            <img src="path-to-your-image/AWS.jpg" className="d-block mx-lg-auto img-fluid aws" alt="Bootstrap Themes" width="700" height="500" loading="lazy" />
+            <img src="/assets/AWS.jpg" className="d-block mx-lg-auto img-fluid aws" alt="Bootstrap Themes" width="700" height="500" loading="lazy" />
           </div>
           <div className="col-lg-6">
             <h1 className="display-5 fw-bold text-body-emphasis lh-1 mb-3">Reliable and Responsive</h1>

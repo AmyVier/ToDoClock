@@ -4,7 +4,12 @@ import { useUser } from '../context/UserContext';
 import { getTasks, addTask, deleteTask } from '../api';
 
 const Edit = () => {
-  const { username } = useUser();
+  const { username, signOut } = useUser();
+
+  const handleLogout = () => {
+    signOut(); 
+  };
+
   const [taskList, setTaskList] = useState([]);  // State to hold tasks
 
 
@@ -108,6 +113,7 @@ const Edit = () => {
                 <>
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-Do Clock</button></a>
                   <a href="/edit"><button type="button" className="btn btn-info">Edit Clock</button></a>
+                  <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               )}
             </div>

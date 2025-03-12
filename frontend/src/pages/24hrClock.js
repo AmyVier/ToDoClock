@@ -5,9 +5,13 @@ import Clock from '../components/Clock';
 import { getTasks } from '../api';
 
 const DayClock = () => {
-  const { username } = useUser();
+  const { username, signOut } = useUser();
   const [taskList, setTaskList] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleLogout = () => {
+    signOut(); // Call the signOut function from context
+  };
 
   const timeToDegrees = (hours, minutes) => {
     return (hours * 15) + (minutes * 0.25);
@@ -80,6 +84,7 @@ const DayClock = () => {
                 <>
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-Do Clock</button></a>
                   <a href="/edit"><button type="button" className="btn btn-info">Edit Clock</button></a>
+                   <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               )}
             </div>
@@ -98,6 +103,23 @@ const DayClock = () => {
           <Clock taskList={taskList} />
         </div>
       )}
+
+      {username && taskList.length > 0 && taskList.map((task) => (
+        <div className="container my-4" key={task.TaskID}>
+          <div className="card mb-3">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <div>
+                <h5 className="card-title text-secondary fs-3">{task.Task_name}</h5>
+                <small className="text-muted d-block">Start Time: {task.Task_start_date}</small>
+                <small className="text-muted d-block">End Time: {task.Task_end_date}</small>
+              </div>
+            </div>
+            <div className="card-body">
+              <p className="card-text">{task.Task_description}</p>
+            </div>
+          </div>
+        </div>
+      ))}
 
       <div className="container">
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">

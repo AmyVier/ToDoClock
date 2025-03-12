@@ -2,8 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
-const Home = ({ loggedIn }) => {
-  const { username } = useUser();
+const Home = () => {
+  const { username, signOut } = useUser();
+
+  const handleLogout = () => {
+    signOut(); // Call the signOut function from context
+  };
 
   return (
     <div>
@@ -31,6 +35,7 @@ const Home = ({ loggedIn }) => {
                 <>
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-Do Clock</button></a>
                   <a href="/edit"><button type="button" className="btn btn-info">Edit Clock</button></a>
+                  <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               )}
             </div>
@@ -59,7 +64,7 @@ const Home = ({ loggedIn }) => {
         </div>
         <div className="overflow-hidden" style={{ maxHeight: '62vh' }}>
           <div className="container px-5">
-            <img src="/path-to-your-image/ToDoImage.webp" className="img-fluid border rounded-3 shadow-lg mb-4" alt="To-Do Clock" width="900" height="900" loading="lazy" />
+            <img src="/assets/ToDoImage.webp" className="img-fluid border rounded-3 shadow-lg mb-4" alt="To-Do Clock" width="900" height="900" loading="lazy" />
           </div>
         </div>
       </div>

@@ -26,8 +26,13 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('username', username);  // Save to localStorage
   };
 
+  const handleSignOut = () => {
+    setUsername(null);
+    localStorage.removeItem('username');  // Remove from localStorage
+  };
+
   return (
-    <UserContext.Provider value={{ username, setUsername: handleSetUsername }}>
+    <UserContext.Provider value={{ username, setUsername: handleSetUsername, signOut: handleSignOut }}>
       {children}
     </UserContext.Provider>
   );

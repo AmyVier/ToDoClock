@@ -1,5 +1,0 @@
-# Python bytecode files
-app/__pycache__
-
-# Virtual environment directory 
-venv

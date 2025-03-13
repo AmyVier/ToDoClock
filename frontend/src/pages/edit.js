@@ -72,7 +72,9 @@ const Edit = () => {
     }
   };
 
-  const handleDelete = async (taskId) => {
+  const handleDelete = async (e, taskId) => {
+    e.preventDefault();
+
     try {
       const status = await deleteTask(username, taskId);
       if (status === 200) {
@@ -205,7 +207,7 @@ const Edit = () => {
                 <small className="text-muted d-block">End Time: {task.Task_end_date}</small>
               </div>
 
-              <form onSubmit={() => handleDelete(task.TaskID)}>
+              <form onSubmit={(e) => handleDelete(e, task.TaskID)}>
                 <button className="btn btn-info" type="submit">Delete</button>
               </form>
             </div>

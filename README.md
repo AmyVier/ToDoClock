@@ -1,7 +1,7 @@
 # ToDoClock
 
 ## Description
-The To-Do Clock is a website that allows users to set tasks that they need to do for the day. The website organizes the tasks in a 24-hour clock interface that enables the user to see how their tasks are arranged for the day and whether they have been completed.
+The To-Do Clock is a website that allows users to set tasks that they need to do for the day. The website organizes the tasks in a 24-hour clock interface that enables the user to see how their tasks are arranged for the day.
 
 ## Features
 - Create an account

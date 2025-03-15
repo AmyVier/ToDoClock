@@ -10,6 +10,8 @@ import { getTasks, addTask, deleteTask } from '../api';
 
 const Edit = () => {
   const navigate = useNavigate(); // to navigate to other pages
+  const [taskStatus, setTaskStatus] = useState(null); // To manage create task status messages
+
 
   // to rerender page when user signs out
   const { username, signOut } = useUser();
@@ -79,9 +81,13 @@ const Edit = () => {
           Task_start_date: '',
           Task_end_date: '',
         });  // Clear the form after submission
-      } 
+        setTaskStatus('Created');
+      } else {
+        setTaskStatus('NotCreated');
+      }
     } catch (error) {
       console.error('Error adding task:', error);
+      setTaskStatus('NotCreated');
     }
   };
 
@@ -206,6 +212,16 @@ const Edit = () => {
 
                 <button type="submit" className="btn btn-info">Make Task</button>
               </form>
+              {taskStatus === "NotCreated" && (
+                <div className="alert alert-danger mt-3 text-center">
+                  Pick A Different Time!
+                </div>
+              )}
+              {taskStatus === "Created" && (
+                <div className="alert alert-success mt-3 text-center">
+                  Task Successfully Created!
+                </div>
+              )}
             </div>
           )}
         </div>

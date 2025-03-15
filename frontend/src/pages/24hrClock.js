@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Clock from '../components/Clock';
 import { getTasks } from '../api';
@@ -12,10 +13,12 @@ const DayClock = () => {
   const { username, signOut } = useUser(); // to rerender page when user signout
   const [taskList, setTaskList] = useState([]);  // State to hold tasks
   const [loading, setLoading] = useState(true); // set clock UI to loading when tasks are still getting fetched
+  const navigate = useNavigate(); // to navigate to other pages
 
   // log out from clicking button
   const handleLogout = () => {
     signOut(); 
+    navigate('/'); 
   };
 
   // turn time into degrees from clock UI

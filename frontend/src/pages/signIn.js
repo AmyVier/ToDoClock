@@ -25,7 +25,7 @@ const SignIn = () => {
     if (status === 200) {
       setLoginFeedback(null);
       setUsername(username);
-      navigate('/features'); // 
+      navigate('/features'); 
     } else {
       setLoginFeedback('userDNE');
     } 

@@ -4,16 +4,20 @@
 
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getTasks, addTask, deleteTask } from '../api';
 
 const Edit = () => {
+  const navigate = useNavigate(); // to navigate to other pages
+
   // to rerender page when user signs out
   const { username, signOut } = useUser();
 
   // log out button
   const handleLogout = () => {
     signOut(); 
+    navigate('/'); 
   };
 
    // State to hold tasks

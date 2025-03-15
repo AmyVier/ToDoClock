@@ -1,17 +1,22 @@
+/*
+  The code is for the sign up page
+*/
+
 import React, { useState } from 'react';
 import { addAccount } from '../api';
 
 const SignUp = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(''); // state for username
+  const [password, setPassword] = useState(''); // state for password
   const [accountStatus, setAccountStatus] = useState(null); // To manage account status messages
 
+  // sign up
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const statusCode = await addAccount(username, password);
 
-    // Dummy check for existing account (replace with your actual validation logic)
+    // check for existing account 
     if (statusCode === 200) {
       setAccountStatus('Created');
     } else {

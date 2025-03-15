@@ -1,12 +1,17 @@
+/*
+  The code is for the home page or / page
+*/
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
-const Home = () => {
-  const { username, signOut } = useUser();
+const Home = () => { 
+  const { username, signOut } = useUser(); // to rerender page when sign out
 
+  // sign out button
   const handleLogout = () => {
-    signOut(); // Call the signOut function from context
+    signOut();
   };
 
   return (

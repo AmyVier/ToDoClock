@@ -1,25 +1,31 @@
+/*
+  The code is for the sign in page
+*/
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { checkAccount } from '../api';
 
 const SignIn = () => {
-  const [loginFeedback, setLoginFeedback] = useState(null);
-  const { setUsername } = useUser();
-  const navigate = useNavigate();
+  const [loginFeedback, setLoginFeedback] = useState(null); // login feedbackUI
+  const { setUsername } = useUser(); // save username to local storage
+  const navigate = useNavigate(); // to navigate to other pages
 
+  // login
   const handleLogin = async (event) => {
     event.preventDefault();
 
     const username = event.target.username.value;
     const password = event.target.password.value;
 
+    // check if user exists
     const status = await checkAccount(username, password);
 
     if (status === 200) {
       setLoginFeedback(null);
       setUsername(username);
-      navigate('/features');
+      navigate('/features'); // 
     } else {
       setLoginFeedback('userDNE');
     } 

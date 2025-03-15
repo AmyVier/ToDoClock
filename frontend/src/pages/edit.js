@@ -1,18 +1,25 @@
+/*
+  The code is for the edit page
+*/
+
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useUser } from '../context/UserContext';
 import { getTasks, addTask, deleteTask } from '../api';
 
 const Edit = () => {
+  // to rerender page when user signs out
   const { username, signOut } = useUser();
 
+  // log out button
   const handleLogout = () => {
     signOut(); 
   };
 
-  const [taskList, setTaskList] = useState([]);  // State to hold tasks
+   // State to hold tasks
+  const [taskList, setTaskList] = useState([]);  
 
-
+  // State to hold task data 
   const [taskData, setTaskData] = useState({
     Task_name: '',
     Task_description: '',
@@ -23,6 +30,7 @@ const Edit = () => {
   // Add state for form visibility toggle
   const [isFormVisible, setIsFormVisible] = useState(false);
 
+  // change task list when username changes
   useEffect(() => {
     if (username) {
       const fetchTasks = async () => {
@@ -34,8 +42,9 @@ const Edit = () => {
 
       fetchTasks();
     }
-  }, [username]); // This will re-run whenever username changes
+  }, [username]);
 
+  // handle input change for form add new task UI
   const handleChange = (e) => {
     setTaskData({
       ...taskData,
@@ -43,12 +52,12 @@ const Edit = () => {
     });
   };
 
+  // add new task
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const taskComplete = {
       ...taskData,  // Spread the existing task data
-      Task_completion: false,  // Add Task_completion with false
       Username: username,
     };
 
@@ -72,6 +81,7 @@ const Edit = () => {
     }
   };
 
+  // delete task
   const handleDelete = async (e, taskId) => {
     e.preventDefault();
 

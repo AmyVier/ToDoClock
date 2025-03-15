@@ -1,3 +1,8 @@
+/*
+This file makes the website save the username of the user who logged in to 
+local storage.
+*/
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Create the context
@@ -23,12 +28,13 @@ export const UserProvider = ({ children }) => {
   // Set the username and save it to localStorage
   const handleSetUsername = (username) => {
     setUsername(username);
-    localStorage.setItem('username', username);  // Save to localStorage
+    localStorage.setItem('username', username); 
   };
 
+  // Set username to null to sign out/ remove username from localSorage
   const handleSignOut = () => {
     setUsername(null);
-    localStorage.removeItem('username');  // Remove from localStorage
+    localStorage.removeItem('username');  
   };
 
   return (

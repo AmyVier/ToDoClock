@@ -1,3 +1,7 @@
+/*
+  The code is for the clock page
+*/
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -5,18 +9,21 @@ import Clock from '../components/Clock';
 import { getTasks } from '../api';
 
 const DayClock = () => {
-  const { username, signOut } = useUser();
-  const [taskList, setTaskList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { username, signOut } = useUser(); // to rerender page when user signout
+  const [taskList, setTaskList] = useState([]);  // State to hold tasks
+  const [loading, setLoading] = useState(true); // set clock UI to loading when tasks are still getting fetched
 
+  // log out from clicking button
   const handleLogout = () => {
-    signOut(); // Call the signOut function from context
+    signOut(); 
   };
 
+  // turn time into degrees from clock UI
   const timeToDegrees = (hours, minutes) => {
     return (hours * 15) + (minutes * 0.25);
   };
 
+  // clock UI, rerender when username changes
   useEffect(() => {
     if (username) {
       const fetchTasks = async () => {

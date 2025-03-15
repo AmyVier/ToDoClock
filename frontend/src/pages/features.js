@@ -1,11 +1,16 @@
+/*
+  The code is for the features page
+*/
+
 import React from 'react';
 import { useUser } from '../context/UserContext';
 
 const Features = () => {
-  const { username, signOut } = useUser();
+  const { username, signOut } = useUser(); // to rerender page when user signout
 
+  // sign out button
   const handleLogout = () => {
-    signOut(); // Call the signOut function from context
+    signOut(); 
   };
 
   return (

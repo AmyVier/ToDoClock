@@ -26,5 +26,6 @@ Before you begin, make sure you have the following installed on your system:
 
 ### Frontend (React)
 1. go to frontend folder/directory
-2. run: npm start
-3. it will run on port number 3000 
+2. run: npm install
+3. run: npm start
+4. it will run on port number 3000 

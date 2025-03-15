@@ -39,7 +39,7 @@ const Home = () => {
               ) : (
                 <>
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-Do Clock</button></a>
-                  <a href="/edit"><button type="button" className="btn btn-info">Edit Clock</button></a>
+                  <a href="/edit"><button type="button" className="btn btn-info me-2">Edit Clock</button></a>
                   <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               )}

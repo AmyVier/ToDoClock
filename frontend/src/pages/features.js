@@ -32,7 +32,7 @@ const Features = () => {
                 <>
                   {/* Buttons visible when the user is logged in */}
                   <a href="/clock"><button type="button" className="btn btn-outline-light me-2">To-do Clock</button></a>
-                  <a href="/edit"><button type="button" className="btn btn-info">Edit Tasks</button></a>
+                  <a href="/edit"><button type="button" className="btn btn-info me-2">Edit Tasks</button></a>
                   <button type="button" onClick={handleLogout} className="btn btn-outline-danger me-2">Sign Out</button>
                 </>
               ) : (

@@ -1,6 +1,6 @@
 """
 This file  connects with a
-DynamoDB database to store and retrieve task data.
+DynamoDB database to store and retrieve task/account data.
 """
 import time
 from datetime import datetime
@@ -11,7 +11,6 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError, Cli
 # Initialize DynamoDB resource
 dynamodb = boto3.resource('dynamodb', region_name='us-east-2') 
 
-# edit later: may change tables
 # key: Username
 # attributes: Password
 accountTable = dynamodb.Table('Account') 
@@ -19,10 +18,11 @@ accountTable = dynamodb.Table('Account')
 # key: Username
 # sort key: TaskID
 # attributes: Task_name, Task_description, Task_start_date, 
-# Task_end_date, Task_completion
-# (task dates are in the format: "yyyy-mm-dd hh:mm" and Task_completion is False/True)
+# Task_end_date
+# (task dates are in the format: "hh:mm")
 taskTable = dynamodb.Table('Task') 
 
+# See if account exists in table
 def get_user(username, password):
     try:
         response = accountTable.scan(
@@ -38,13 +38,14 @@ def get_user(username, password):
         print(f"Error fetching user: {e}")
         return None
 
+# Add account to database
 def add_user(username, password):
     try:
-        # Insert a new item with the username and password
+        # make sure the username does not already exists
         response = accountTable.put_item(
             Item={
-                'Username': username,  # Primary key attribute
-                'Password': password   # Store password (ensure to hash it in production)
+                'Username': username, 
+                'Password': password  
             }, ConditionExpression="attribute_not_exists(Username)"
         )
         print(f"User {username} added successfully!")
@@ -62,7 +63,7 @@ def add_user(username, password):
         print(f"Error adding user: {e}")
         return None
 
-# Function to get all tasks from DynamoDB
+# Function to get all tasks from account
 def get_all_tasks(username):
     try:
         response = taskTable.scan(
@@ -72,6 +73,7 @@ def get_all_tasks(username):
 
         tasks = response['Items']
 
+        # sort by start date
         tasks.sort(key=lambda x: datetime.strptime(x['Task_start_date'], '%H:%M'))
 
         return tasks  
@@ -82,19 +84,19 @@ def get_all_tasks(username):
         print(f"Error retrieving tasks: {e}")
         return None
 
+# Helper function to check if two time periods overlap.
+# Returns True if there is an overlap, otherwise False.
 def check_time_overlap(start1, end1, start2, end2):
-    """
-    Helper function to check if two time periods overlap.
-    Returns True if there is an overlap, otherwise False.
-    """
     return not (end1 <= start2 or end2 <= start1)
 
 
 # Function to add a new task
 def add_task(username, task_name, task_description, 
-             task_start_date, task_end_date, task_completion):
+             task_start_date, task_end_date):
+    # create task ID
     task_id = f"task_{int(time.time())}"
 
+    # parse time
     try:
         start_time = datetime.strptime(task_start_date, '%H:%M')
         end_time = datetime.strptime(task_end_date, '%H:%M')
@@ -102,11 +104,14 @@ def add_task(username, task_name, task_description,
         return {'status': 'failure', 'message': f"Error parsing time: {e}"}
     
     try: 
+        # get all tasks
         response = taskTable.scan(
             FilterExpression='Username = :username',
             ExpressionAttributeValues={':username': username}
         )
         existing_tasks = response['Items']
+
+        # check if tasks overlap in time
         for existing_task in existing_tasks:
             existing_start_time = datetime.strptime(existing_task['Task_start_date'], '%H:%M')
             existing_end_time = datetime.strptime(existing_task['Task_end_date'], '%H:%M')
@@ -117,20 +122,19 @@ def add_task(username, task_name, task_description,
             
         taskTable.put_item(Item={'Username': username, 'TaskID': task_id, 
                                  'Task_name': task_name, 'Task_description': task_description,
-                                 'Task_start_date': task_start_date, 'Task_end_date': task_end_date, 
-                                 'Task_completion': task_completion,})
+                                 'Task_start_date': task_start_date, 'Task_end_date': task_end_date,})
         return {'status': 'success', 'message': 'Task added'}
     except Exception as e:
         print(f"Error adding task: {e}")
         return {'status': 'failure', 'message': str(e)}
 
+# delete task
 def delete_task(username, task_id):
     try:
-        # Perform the delete operation
         response = taskTable.delete_item(
             Key={
-                'Username': username,  # Partition Key
-                'TaskID': task_id     # Sort Key
+                'Username': username,  
+                'TaskID': task_id     
             }
         )
         # Check if the item was actually deleted
@@ -144,50 +148,4 @@ def delete_task(username, task_id):
         return False
     except Exception as e:
         print(f"Error deleting task: {e}")
-        return False
-
-def edit_task(username, task_id, task_name, task_description, task_start_date, task_end_date, task_completion):
-    try:
-        # Prepare the update expression and expression attribute values
-        update_expression = "SET "
-        expression_attribute_values = {}
-
-        if task_name is not None:
-            update_expression += "Task_name = :task_name, "
-            expression_attribute_values[":task_name"] = task_name
-        if task_description is not None:
-            update_expression += "Task_description = :task_description, "
-            expression_attribute_values[":task_description"] = task_description
-        if task_start_date is not None:
-            update_expression += "Task_start_date = :task_start_date, "
-            expression_attribute_values[":task_start_date"] = task_start_date
-        if task_end_date is not None:
-            update_expression += "Task_end_date = :task_end_date, "
-            expression_attribute_values[":task_end_date"] = task_end_date
-        if task_completion is not None:
-            update_expression += "Task_completion = :task_completion, "
-            expression_attribute_values[":task_completion"] = task_completion
-
-        # Remove the last comma and space
-        update_expression = update_expression.rstrip(", ")
-
-        # Perform the update operation
-        response = taskTable.update_item(
-            Key={
-                'Username': username,
-                'TaskID': task_id
-            },
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values,
-            ReturnValues="ALL_NEW"  # To return the updated attributes
-        )
-
-        # Check if the task was successfully updated
-        if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
-            return True
-        else:
-            return False
-
-    except Exception as e:
-        print(f"Error updating task: {e}")
         return False

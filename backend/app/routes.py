@@ -1,28 +1,40 @@
 """
-This file contains the backend routes for the Flask application.
-
-It includes all the API routes.
+This file contains the API for the Flask application.
 
 Routes:
+- POST /account: send account username/password to see if the account exists
+- POST /add_account: add account.
+
 - GET /tasks: Retrieve all tasks from the database
 - POST /tasks: Add a new task to the database
+- DELETE /delete_task: delete task
 
 This file should be executed in a Flask environment.
 """
 
 from flask import Blueprint, request, jsonify
-from .dynamodb import get_all_tasks, add_task, get_user, add_user, delete_task, edit_task
+from datetime import datetime
+from .dynamodb import get_all_tasks, add_task, get_user, add_user, delete_task
 
 # Initialize a Flask blueprint for routing
 routes = Blueprint('routes', __name__)
 
+# Route see if account exists
+# Request Body: Username, Password
 @routes.route('/account', methods=['POST'])
 def account_exists():
     data = request.get_json()
+
     username = data.get('Username')
     password = data.get('Password')
 
+    # Validate input
+    if not username or not password:
+        return jsonify({"message": "Username and password are required"}), 400
+
+    # see if user exists
     exists = get_user(username, password)
+
     if exists is not None:
         if exists:
             return jsonify(exists), 200
@@ -32,9 +44,9 @@ def account_exists():
         return jsonify({"message": "Error fetching account"}), 500
 
 # Route to add a new user
+# Request Body: Username, Password
 @routes.route('/add_account', methods=['POST'])
 def add_account():
-    # Retrieve the JSON data from the request body
     data = request.get_json()
 
     username = data.get('Username')
@@ -52,44 +64,72 @@ def add_account():
     else:
         return jsonify({"message": "Error adding user"}), 500
 
-# Route to get all tasks from DynamoDB
+# Route to get all tasks from account
 # Response Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
-# Task_end_date, Task_completion
-# (task dates are in the format: "yyyy-mm-dd hh:mm" and Task_completion is False/True)
+# Task_end_date
+# (task dates are in the format: "hh:mm")
 @routes.route('/tasks', methods=['GET'])
 def tasks():
     username = request.args.get('Username')
+
+    # Validate input
+    if not username:
+        return jsonify({"message": "Username is required"}), 400
+
+    # get tasks
     tasks = get_all_tasks(username)
+
     if tasks is not None:
         return jsonify(tasks), 200
     else:
         return jsonify({"message": "Error fetching tasks"}), 500
 
-# Route to add a new task to DynamoDB
+# Helper function to validate the time format and ensure start < end
+def is_valid_time(time_str):
+    try:
+        # Convert the time string to a datetime object
+        return datetime.strptime(time_str, "%H:%M")
+    except ValueError:
+        return None
+
+# Route to add a task
 # Request Body: Username, Task_name, Task_description, Task_start_date, 
-# Task_end_date, Task_completion
+# Task_end_date
 @routes.route('/tasks', methods=['POST'])
 def add_new_task():
     data = request.get_json()
 
-    # to change later: attributes may be changed/deleted/added
     task_username = data.get('Username')
-    task_name = data.get('Task_name')
-    task_description = data.get('Task_description')
+    task_name = data.get('Task_name', 'Untitled Task')
+    task_description = data.get('Task_description', 'No Description')
     task_start_date = data.get('Task_start_date')
     task_end_date = data.get('Task_end_date')
-    task_completion = data.get('Task_completion')
 
-    if task_name:
-        result = add_task(task_username, task_name, task_description, 
-                          task_start_date, task_end_date, task_completion)
-        if result['status'] == 'success':
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 500
+     # Validate input
+    if not task_username or not task_start_date or not task_end_date:
+        return jsonify({"message": "Username and Task Time Period are required"}), 400
+    
+    # Validate times
+    start_time = is_valid_time(task_start_date)
+    end_time = is_valid_time(task_end_date)
+
+    if not start_time or not end_time:
+        return jsonify({"message": "Time format must be HH:MM"}), 400
+    
+    if start_time >= end_time:
+        return jsonify({"message": "Task start time must be before task end time"}), 400
+    
+    # add tasks
+    result = add_task(task_username, task_name, task_description, 
+                        task_start_date, task_end_date)
+    
+    if result['status'] == 'success':
+        return jsonify(result), 200
     else:
-        return jsonify({"message": "Invalid data provided"}), 400
+        return jsonify({"message": "Error adding task"}), 500
 
+# Route to delete task 
+# Response Body: Username, TaskID
 @routes.route('/delete_task', methods=['DELETE'])
 def delete_task_route():
     # Retrieve JSON data from the request body
@@ -110,23 +150,3 @@ def delete_task_route():
     else:
         return jsonify({"message": "Error deleting task"}), 500
     
-
-@routes.route('/update_task', methods=['POST'])
-def update_task():
-    data = request.get_json()
-
-    username = data.get('Username')
-    task_id = data.get('TaskID')
-    task_name = data.get('Task_name', None)
-    task_description = data.get('Task_description', None)
-    task_start_date = data.get('Task_start_date', None)
-    task_end_date = data.get('Task_end_date', None)
-    task_completion = data.get('Task_completion', None)
-
-    # Call the function to update the task
-    success = edit_task(username, task_id, task_name, task_description, task_start_date, task_end_date, task_completion)
-    
-    if success:
-        return jsonify({"message": "Task updated successfully"}), 200
-    else:
-        return jsonify({"message": "Error updating task"}), 500

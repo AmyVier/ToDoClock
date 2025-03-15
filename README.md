@@ -13,7 +13,7 @@ Add features here.
 - **Backend Hosting**: EC2
 - **Database Backup**: S3 (storing), Lambda (function to invoke backup), Amazon EventBridge (to periodically invoke backup functions)
 - **Frontend Hosting**: Don't know yet   
-- **Others**: Flask-CORS for handling cross-origin requests, Bootstrap
+- **Others**: Flask-CORS for handling cross-origin requests, Bootstrap for UI, tmux to keep backend running on EC2
 
 ## Prerequisites
 Before you begin, make sure you have the following installed on your system:

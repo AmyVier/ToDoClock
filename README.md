@@ -15,7 +15,6 @@ The To-Do Clock is a website that allows users to set tasks that they need to do
 - **Database**: DynamoDB 
 - **Backend Hosting**: EC2
 - **Database Backup**: S3 (storing), Lambda (function to invoke backup), Amazon EventBridge (to periodically invoke backup functions)
-- **Frontend Hosting**: Don't know yet   
 - **Others**: Flask-CORS for handling cross-origin requests, Bootstrap for UI, tmux to keep backend running on EC2
 
 ## Prerequisites

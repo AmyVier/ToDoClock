@@ -4,7 +4,10 @@
 The To-Do Clock is a website that allows users to set tasks that they need to do for the day. The website organizes the tasks in a 24-hour clock interface that enables the user to see how their tasks are arranged for the day and whether they have been completed.
 
 ## Features
-Add features here.
+- Create an account
+- Sign in with an account
+- Add and delete tasks
+- See the tasks in an clock-esque manner
 
 ## Technologies Used
 - **Backend**: Flask, Python
@@ -17,12 +20,13 @@ Add features here.
 
 ## Prerequisites
 Before you begin, make sure you have the following installed on your system:
-- Python 3.x
 - Node.js and npm
-- AWS CLI 
 - Git 
 
 ## Deployment 
+
+### Backend (Flask)
+The backend application is already running on EC2 using tmux.
 
 ### Frontend (React)
 1. go to frontend folder/directory

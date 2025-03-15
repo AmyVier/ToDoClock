@@ -65,6 +65,7 @@ def add_account():
         return jsonify({"message": "Error adding user"}), 500
 
 # Route to get all tasks from account
+# Query String: Username
 # Response Body: Username, TaskID, Task_name, Task_description, Task_start_date, 
 # Task_end_date
 # (task dates are in the format: "hh:mm")
